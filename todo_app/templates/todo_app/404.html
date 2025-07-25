@@ -1,0 +1,27 @@
+{% extends 'todo_app/base.html' %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div class="card">
+            <div class="card-body py-5">
+                <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+                <h2 class="card-title">Oops! Page Not Found</h2>
+                <p class="card-text text-muted mb-4">
+                    The page you're looking for doesn't exist or has been moved.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'task_list' %}" class="btn btn-primary me-md-2">
+                        <i class="fas fa-home me-1"></i>Go to Tasks
+                    </a>
+                    <a href="{% url 'add_task' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-1"></i>Add New Task
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

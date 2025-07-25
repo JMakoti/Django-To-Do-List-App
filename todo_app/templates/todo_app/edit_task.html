@@ -1,0 +1,149 @@
+{% extends 'todo_app/base.html' %}
+
+{% block title %}Edit Task - {{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>Edit Task
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            <i class="fas fa-heading me-1"></i>Task Title *
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{ task.title }}" placeholder="Enter task title" 
+                               required maxlength="200">
+                        <div class="form-text">Maximum 200 characters</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-align-left me-1"></i>Description (Optional)
+                        </label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="4" placeholder="Enter task description (optional)">{{ task.description }}</textarea>
+                        <div class="form-text">Provide additional details about the task</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="completed" 
+                                   name="completed" {% if task.completed %}checked{% endif %}>
+                            <label class="form-check-label" for="completed">
+                                <i class="fas fa-check-circle me-1"></i>Mark as completed
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar-plus me-1"></i>
+                                Created: {{ task.created_at|date:"M d, Y H:i" }}
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar-edit me-1"></i>
+                                Last Updated: {{ task.updated_at|date:"M d, Y H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <div>
+                            <a href="{% url 'task_detail' task.id %}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Task
+                            </a>
+                            <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-list me-1"></i>All Tasks
+                            </a>
+                        </div>
+                        
+                        <div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header bg-danger text-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Danger Zone
+                </h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">
+                    Once you delete this task, there is no going back. Please be certain.
+                </p>
+                <a href="{% url 'delete_task' task.id %}" class="btn btn-outline-danger" 
+                   onclick="return confirm('Are you sure you want to delete this task? This action cannot be undone.')">
+                    <i class="fas fa-trash me-1"></i>Delete Task
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Focus on title field when page loads
+document.getElementById('title').focus();
+
+// Character counter for title
+document.getElementById('title').addEventListener('input', function() {
+    const maxLength = 200;
+    const currentLength = this.value.length;
+    const remaining = maxLength - currentLength;
+    
+    // Update form text
+    const formText = this.nextElementSibling;
+    formText.textContent = `${remaining} characters remaining`;
+    
+    // Change color based on remaining characters
+    if (remaining < 20) {
+        formText.className = 'form-text text-warning';
+    } else if (remaining < 10) {
+        formText.className = 'form-text text-danger';
+    } else {
+        formText.className = 'form-text';
+    }
+});
+
+// Show confirmation when form is dirty and user tries to leave
+let formChanged = false;
+const form = document.querySelector('form');
+const inputs = form.querySelectorAll('input, textarea');
+
+inputs.forEach(input => {
+    input.addEventListener('change', () => {
+        formChanged = true;
+    });
+});
+
+window.addEventListener('beforeunload', (e) => {
+    if (formChanged) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+
+// Reset form changed flag on form submit
+form.addEventListener('submit', () => {
+    formChanged = false;
+});
+</script>
+{% endblock %}

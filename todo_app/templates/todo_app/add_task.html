@@ -1,0 +1,75 @@
+{% extends 'todo_app/base.html' %}
+
+{% block title %}Add New Task{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus me-2"></i>Add New Task
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            <i class="fas fa-heading me-1"></i>Task Title *
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               placeholder="Enter task title" required maxlength="200">
+                        <div class="form-text">Maximum 200 characters</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-align-left me-1"></i>Description (Optional)
+                        </label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="4" placeholder="Enter task description (optional)"></textarea>
+                        <div class="form-text">Provide additional details about the task</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'task_list' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Add Task
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Focus on title field when page loads
+document.getElementById('title').focus();
+
+// Character counter for title
+document.getElementById('title').addEventListener('input', function() {
+    const maxLength = 200;
+    const currentLength = this.value.length;
+    const remaining = maxLength - currentLength;
+    
+    // Update form text
+    const formText = this.nextElementSibling;
+    formText.textContent = `${remaining} characters remaining`;
+    
+    // Change color based on remaining characters
+    if (remaining < 20) {
+        formText.className = 'form-text text-warning';
+    } else if (remaining < 10) {
+        formText.className = 'form-text text-danger';
+    } else {
+        formText.className = 'form-text';
+    }
+});
+</script>
+{% endblock %}
